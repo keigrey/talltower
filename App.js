@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button, Image } from "react-native";
+import { useAssets } from "expo-asset";
 import * as ImagePicker from "expo-image-picker";
 
 export default function App() {
@@ -41,3 +42,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+function Main() {
+  const [assets] = useAssets(
+    require("./assets/user-icon-dark.png"),
+    require("./assets/user-icon-square-dark.png"),
+    require("./assets/chat-background.png")
+  );
+}
