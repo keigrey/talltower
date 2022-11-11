@@ -1,52 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, Image } from "react-native";
+import { StyleSheet, Text, View, LogBox } from "react-native";
 import { useAssets } from "expo-asset";
-import * as ImagePicker from "expo-image-picker";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import SignIn from "./screens/SignIn";
 
-export default function App() {
-  const [image, setImage] = useState(null);
+// LogBox.ignoreLogs(["Setting a timer"]);
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+const Stack = createStackNavigator();
+
+function App() {
+  const [currUser, setCurrUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setLoading(false);
+      if (user) {
+        setCurrUser(user);
+      }
     });
 
-    console.log(result);
+    return () => unsubscribe();
+  }, []);
 
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
+  if (loading) {
+    return <Text>Loading..</Text>;
+  }
 
   return (
-    <View style={styles.container}>
-      {/* <Text>Hello World!</Text> */}
-      <Button title="Pick an image" onPress={pickImage} />
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+    <NavigationContainer>
+      {!currUser ? (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="signIn" component={SignIn} />
+        </Stack.Navigator>
+      ) : (
+        <Text>Hi</Text>
       )}
-    </View>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
-function Main() {
+export default function Main() {
   const [assets] = useAssets(
     require("./assets/user-icon-dark.png"),
     require("./assets/user-icon-square-dark.png"),
-    require("./assets/chat-background.png")
+    require("./assets/chat-background.png"),
+    require("./assets/welcome-logo.png")
   );
+
+  if (!assets) {
+    return <Text>Loading...</Text>;
+  }
+  return <App />;
 }
