@@ -64,14 +64,29 @@ export default function SignIn() {
       </View>
       <View>
         <TouchableOpacity
+          onPress={handlePress}
+          disabled={!password || !email}
           style={{
             alignItems: "center",
-            backgroundColor: "red",
+            backgroundColor:
+              !password || !email ? colors.tertiary : colors.text,
             padding: 5,
             marginTop: 20,
           }}
         >
-          <Text>Sign Up</Text>
+          <Text>{mode === "signUp" ? "Sign Up" : "Sign In"}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            mode === "signUp" ? setMode("signIn") : setMode("signUp")
+          }
+          style={{ marginTop: 15 }}
+        >
+          <Text>
+            {mode === "signUp"
+              ? "Already have an account? Sign In"
+              : "Don't have an account? Sign Up"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
