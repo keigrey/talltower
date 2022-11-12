@@ -1,3 +1,5 @@
+import * as ImagePicker from "expo-image-picker";
+
 const palette = {
   jet: "#0b0c0b", //background
   onyx: "#181818",
@@ -24,3 +26,13 @@ export const theme = {
     iconGray: palette.mint,
   },
 };
+
+export async function pickImage() {
+  let result = ImagePicker.launchCameraAsync();
+  return result;
+}
+
+export async function askForPermission() {
+  const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  return status;
+}
