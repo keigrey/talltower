@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import Context from "../context/Context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { pickImage, askForPermission } from "../utils";
 
 export default function Profile() {
   const {
@@ -12,6 +13,20 @@ export default function Profile() {
 
   const [displayName, setDisplayName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+
+  function handlePress() {
+    //
+  }
+
+  async function handleProfilePicture() {
+    const permissionStatus = await askForPermission();
+    if (permissionStatus === "granted") {
+      const result = await pickImage();
+      if (!result.cancelled) {
+        setSelectedImage(result.uri);
+      }
+    }
+  }
 
   return (
     <React.Fragment>
@@ -32,6 +47,7 @@ export default function Profile() {
           Please provide your name and an optional profile photo
         </Text>
         <TouchableOpacity
+          onPress={handleProfilePicture}
           style={{
             marginTop: 30,
             width: 120,
@@ -66,6 +82,19 @@ export default function Profile() {
             marginTop: 40,
           }}
         />
+        <TouchableOpacity
+          onPress={handlePress}
+          disabled={!displayName}
+          style={{
+            alignItems: "center",
+            backgroundColor: !displayName ? colors.tertiary : colors.text,
+            padding: 5,
+            marginTop: "auto",
+            width: 80,
+          }}
+        >
+          <Text>Next</Text>
+        </TouchableOpacity>
       </View>
     </React.Fragment>
   );
