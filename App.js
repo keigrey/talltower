@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, LogBox } from "react-native";
 import { useAssets } from "expo-asset";
@@ -8,6 +8,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignIn from "./screens/SignIn";
 import ContextWrapper from "./context/ContextWrapper";
+import Context from "./context/Context";
+import Profile from "./screens/Profile";
 
 // LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -16,6 +18,10 @@ const Stack = createStackNavigator();
 function App() {
   const [currUser, setCurrUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const {
+    theme: { colors },
+  } = useContext(Context);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,10 +45,25 @@ function App() {
           <Stack.Screen name="signIn" component={SignIn} />
         </Stack.Navigator>
       ) : (
-        <Text>Hi</Text>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "red",
+            },
+          }}
+        >
+          {!currUser.displayName && (
+            <Stack.Screen name="profile" component={Profile} />
+          )}
+          <Stack.Screen name="home" component={Home} />
+        </Stack.Navigator>
       )}
     </NavigationContainer>
   );
+}
+
+function Home() {
+  return <Text>Home</Text>;
 }
 
 export default function Main() {
