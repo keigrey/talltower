@@ -6,14 +6,19 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import SignIn from "./screens/SignIn";
 import ContextWrapper from "./context/ContextWrapper";
 import Context from "./context/Context";
 import Profile from "./screens/Profile";
+import Chats from "./screens/Chats";
+import Photo from "./screens/Photo";
+import { Ionicons } from "@expo/vector-icons";
 
 // LogBox.ignoreLogs(["Setting a timer"]);
 
 const Stack = createStackNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 function App() {
   const [currUser, setCurrUser] = useState(null);
@@ -71,7 +76,44 @@ function App() {
 }
 
 function Home() {
-  return <Text>You successfully created your profile</Text>;
+  const {
+    theme: { colors },
+  } = useContext(Context);
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => {
+        return {
+          tabBarLabel: () => {
+            if (route.name === "photo") {
+              return <Ionicons name="camera" size={20} color={"red"} />;
+            } else {
+              return (
+                <Text style={{ color: colors.primary }}>
+                  {route.name.toLocaleUpperCase()}
+                </Text>
+              );
+            }
+          },
+          tabBarShowIcon: true,
+          tabBarLabelStyle: {
+            color: colors.primary,
+          },
+          tabBarIndicatorStyle: {
+            // backgroundColor: colors.primary,
+            backgroundColor: "green",
+          },
+          tabBarStyle: {
+            backgroundColor: "yellow",
+          },
+        };
+      }}
+      initialRouteName="chats"
+    >
+      <Tab.Screen name="photo" component={Photo} />
+      <Tab.Screen name="chats" component={Chats} />
+    </Tab.Navigator>
+  );
 }
 
 export default function Main() {
