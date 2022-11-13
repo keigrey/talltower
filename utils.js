@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
-import { nanoid } from "nanoid";
 import "react-native-get-random-values";
+import { nanoid } from "nanoid";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebase";
 
@@ -67,6 +67,8 @@ export async function uploadImage(uri, path, fName) {
 
   // We're done with the blob, close and release it
   blob.close();
+
+  const url = await getDownloadURL(snapshot.ref);
 
   return { url, fileName };
 }
