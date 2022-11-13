@@ -1,21 +1,65 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
 import React, { useContext, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import Context from "../context/Context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { pickImage, askForPermission } from "../utils";
+import { pickImage, askForPermission, uploadImage } from "../utils";
+import { auth, db } from "../firebase";
+import { updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Profile() {
   const {
     theme: { colors },
   } = useContext(Context);
 
+  const navigation = useNavigation();
+
   const [displayName, setDisplayName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  // TODO: choose better name
+  const [pressed, setPressed] = useState(false);
 
-  function handlePress() {
-    //
+  async function handlePress() {
+    setPressed(true);
+    ///////////////////////////////////////////////
+    const user = auth.currentUser;
+    let photoURL;
+
+    if (selectedImage) {
+      const { url } = await uploadImage(
+        selectedImage,
+        `images/${user.uid}`,
+        "profilePicture"
+      );
+      photoURL = url;
+    }
+
+    // TODO: add user language
+    const userData = {
+      displayName,
+      email: user.email,
+    };
+
+    if (photoURL) {
+      userData.photoURL = photoURL;
+    }
+
+    await Promise.all([
+      updateProfile(user, userData),
+      setDoc(doc(db, "users", user.uid), { ...userData, uid: user.uid }),
+    ]);
+
+    navigation.navigate("home");
   }
 
   async function handleProfilePicture() {
@@ -82,6 +126,15 @@ export default function Profile() {
             marginTop: 40,
           }}
         />
+        {pressed && (
+          <ActivityIndicator
+            size="large"
+            color="#2b2b2b"
+            style={{
+              marginTop: 40,
+            }}
+          />
+        )}
         <TouchableOpacity
           onPress={handlePress}
           disabled={!displayName}
