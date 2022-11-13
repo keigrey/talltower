@@ -53,9 +53,17 @@ function App() {
           }}
         >
           {!currUser.displayName && (
-            <Stack.Screen name="profile" component={Profile} />
+            <Stack.Screen
+              name="profile"
+              component={Profile}
+              options={{ headerShown: false }}
+            />
           )}
-          <Stack.Screen name="home" component={Home} />
+          <Stack.Screen
+            name="home"
+            component={Home}
+            options={{ title: "Talltower" }}
+          />
         </Stack.Navigator>
       )}
     </NavigationContainer>
@@ -63,7 +71,7 @@ function App() {
 }
 
 function Home() {
-  return <Text>Home</Text>;
+  return <Text>You successfully created your profile</Text>;
 }
 
 export default function Main() {
