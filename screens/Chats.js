@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import GlobalContext from "../context/Context";
+import ContactsFloatingIcon from "../components/ContactsFloatingIcon";
 
 export default function Chats() {
   const { rooms, setRooms } = useContext(GlobalContext);
@@ -41,6 +42,7 @@ export default function Chats() {
       }}
     >
       <Text>Chats</Text>
+      <ContactsFloatingIcon />
     </View>
   );
 }
