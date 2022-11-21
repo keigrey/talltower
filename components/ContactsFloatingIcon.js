@@ -2,14 +2,18 @@ import { TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalContext from "../context/Context";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ContactsFloatingIcon() {
   const {
     theme: { colors },
   } = useContext(GlobalContext);
 
+  const navigation = useNavigation();
+
   return (
     <TouchableOpacity
+      onPress={() => navigation.navigate("contacts")}
       style={{
         position: "absolute",
         right: 20,
