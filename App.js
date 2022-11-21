@@ -14,6 +14,7 @@ import Profile from "./screens/Profile";
 import Chats from "./screens/Chats";
 import Photo from "./screens/Photo";
 import { Ionicons } from "@expo/vector-icons";
+import Contacts from "./screens/Contacts";
 
 // LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -68,6 +69,11 @@ function App() {
             name="home"
             component={Home}
             options={{ title: "Talltower" }}
+          />
+          <Stack.Screen
+            name="contacts"
+            component={Contacts}
+            options={{ title: "Select Contacts" }}
           />
         </Stack.Navigator>
       )}
