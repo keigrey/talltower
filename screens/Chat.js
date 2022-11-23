@@ -9,6 +9,7 @@ import Context from "../context/Context";
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { useCallback } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
+import axios from "axios";
 
 const randomId = nanoid();
 
@@ -105,8 +106,42 @@ export default function Chat() {
     return () => unsubscribe();
   }, []);
 
+  async function translate(textToTranslate) {
+    const magicNumber = `${2 + 2}c${6 * 4}b${216 + 654}-f2fd-0a23-${
+      3440 + 1639 + 3982
+    }-${1286699455 * 2 * 2}dc:fx`;
+    const sourceLanguage = "JA";
+    const targetLanguage = "RU";
+    let optionsBody = [];
+
+    const rawBody = {
+      auth_key: magicNumber,
+      text: textToTranslate,
+      source_lang: sourceLanguage,
+      target_lang: targetLanguage,
+    };
+
+    for (const property in rawBody) {
+      const encodedKey = encodeURIComponent(property);
+      const encodedValue = encodeURIComponent(rawBody[property]);
+
+      optionsBody.push(`${encodedKey}=${encodedValue}`);
+    }
+
+    optionsBody = optionsBody.join("&");
+
+    const url = `https://api-free.deepl.com/v2/translate?${optionsBody}`;
+
+    const response = await axios.post(url);
+
+    const translatedText = response.data.translations[0].text;
+    console.log(translatedText);
+  }
+
   function onSend(messages) {
-    const writes = messages.map((message) => console.log(message));
+    const writes = messages.map(
+      (message) => translate(message.text) /*console.log(message)*/
+    );
   }
 
   return (
