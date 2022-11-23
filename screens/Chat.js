@@ -1,5 +1,5 @@
 // @refresh reset
-import { View, Text } from "react-native";
+import { View, Text, ImageBackground } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { useRoute } from "@react-navigation/native";
@@ -105,9 +105,22 @@ export default function Chat() {
     return () => unsubscribe();
   }, []);
 
+  function onSend(messages) {
+    const writes = messages.map((message) => console.log(message));
+  }
+
   return (
-    <View>
-      <Text>Chat</Text>
-    </View>
+    <ImageBackground
+      resizeMode="cover"
+      source={require("../assets/chat-background.png")}
+      style={{ flex: 1 }}
+    >
+      <GiftedChat
+        onSend={onSend}
+        messages={messages}
+        user={senderUser}
+        renderAvatar={null}
+      />
+    </ImageBackground>
   );
 }
