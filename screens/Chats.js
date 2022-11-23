@@ -4,11 +4,14 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import GlobalContext from "../context/Context";
 import ContactsFloatingIcon from "../components/ContactsFloatingIcon";
+import ListItem from "../components/ListItem";
+import useContacts from "../hooks/useHooks";
 
 export default function Chats() {
   const { rooms, setRooms } = useContext(GlobalContext);
   // TODO: rename to user for consistency
   const { currentUser } = auth;
+  const contacts = useContacts();
 
   const chatsQuery = query(
     collection(db, "rooms"),
@@ -32,6 +35,18 @@ export default function Chats() {
     return () => unsubscribe();
   }, []);
 
+  function getUserB(user, contacts) {
+    const userContact = contacts.find(
+      (contact) => contact.email === user.email
+    );
+
+    if (userContact && userContact.contactName) {
+      return { ...user, contactName: userContact.contactName };
+    }
+
+    return user;
+  }
+
   return (
     <View
       style={{
@@ -42,6 +57,16 @@ export default function Chats() {
       }}
     >
       <Text>Chats</Text>
+      {rooms.map((room) => (
+        <ListItem
+          type="chat"
+          description={room.lastMessage.text}
+          key={room.id}
+          room={room}
+          time={room.lastMessage.createdAt}
+          user={getUserB(room.userB, contacts)}
+        />
+      ))}
       <ContactsFloatingIcon />
     </View>
   );
