@@ -13,6 +13,8 @@ import {
   setDoc,
   query,
   where,
+  addDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { useCallback } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
@@ -132,8 +134,8 @@ export default function Chat() {
     const magicNumber = `${2 + 2}c${6 * 4}b${216 + 654}-f2fd-0a23-${
       3440 + 1639 + 3982
     }-${1286699455 * 2 * 2}dc:fx`;
-    const sourceLanguage = "EN";
-    const targetLanguage = "JA";
+    const sourceLanguage = currentUserLanguage;
+    const targetLanguage = userB.userDoc.language;
     let optionsBody = [];
 
     const rawBody = {
@@ -157,18 +159,24 @@ export default function Chat() {
     const response = await axios.post(url);
 
     const translatedText = response.data.translations[0].text;
-    // console.log(translatedText);
+
+    return translatedText;
   }
 
-  function onSend(messages) {
-    const writes = messages.map((message) => {
-      // translate(message.text);
-      // console.log("currentUser", currentUser);
-      console.log("🍎🍎🍎🍎🍎🍎");
-      // console.log(route.params);
-      console.log(currentUser.uid);
-      // console.log("userB", userB);
-    });
+  async function onSend(messagesNotTranslated = []) {
+    const messages = await Promise.all(
+      messagesNotTranslated.map(async (message) => {
+        const translatedText = await translate(message.text);
+        const messageText = {
+          originalMessage: message.text,
+          translatedMessage: translatedText,
+        };
+
+        message.text = messageText;
+
+        return message;
+      })
+    );
   }
 
   return (
