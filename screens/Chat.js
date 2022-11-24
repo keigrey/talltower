@@ -6,7 +6,14 @@ import { useRoute } from "@react-navigation/native";
 import "react-native-get-random-values";
 import { nanoid } from "nanoid";
 import Context from "../context/Context";
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import { useCallback } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import axios from "axios";
@@ -27,6 +34,8 @@ export default function Chat() {
   const selectedImage = route.params.image;
   const userB = route.params.user;
 
+  const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
+
   const senderUser = currentUser.photoURL
     ? {
         name: currentUser.displayName,
@@ -42,6 +51,19 @@ export default function Chat() {
 
   const roomRef = doc(db, "rooms", roomId);
   const roomMessagesRef = collection(db, "rooms", roomId, "messages");
+
+  useEffect(() => {
+    const q = query(
+      collection(db, "users"),
+      where("uid", "==", currentUser.uid)
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (snapshot.docs.length) {
+        setCurrentUserLanguage(snapshot.docs[0].data().language);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -110,8 +132,8 @@ export default function Chat() {
     const magicNumber = `${2 + 2}c${6 * 4}b${216 + 654}-f2fd-0a23-${
       3440 + 1639 + 3982
     }-${1286699455 * 2 * 2}dc:fx`;
-    const sourceLanguage = "JA";
-    const targetLanguage = "RU";
+    const sourceLanguage = "EN";
+    const targetLanguage = "JA";
     let optionsBody = [];
 
     const rawBody = {
@@ -135,13 +157,18 @@ export default function Chat() {
     const response = await axios.post(url);
 
     const translatedText = response.data.translations[0].text;
-    console.log(translatedText);
+    // console.log(translatedText);
   }
 
   function onSend(messages) {
-    const writes = messages.map(
-      (message) => translate(message.text) /*console.log(message)*/
-    );
+    const writes = messages.map((message) => {
+      // translate(message.text);
+      // console.log("currentUser", currentUser);
+      console.log("🍎🍎🍎🍎🍎🍎");
+      // console.log(route.params);
+      console.log(currentUser.uid);
+      // console.log("userB", userB);
+    });
   }
 
   return (
