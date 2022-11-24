@@ -27,7 +27,8 @@ export default function Profile() {
 
   const [displayName, setDisplayName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  // TODO: Default language should be empty
+  const [selectedLanguage, setSelectedLanguage] = useState("EN");
   // TODO: choose better name
   const [pressed, setPressed] = useState(false);
 
@@ -50,6 +51,7 @@ export default function Profile() {
     const userData = {
       displayName,
       email: user.email,
+      language: selectedLanguage,
     };
 
     if (photoURL) {
