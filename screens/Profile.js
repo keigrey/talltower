@@ -16,6 +16,7 @@ import { auth, db } from "../firebase";
 import { updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import { Picker } from "@react-native-picker/picker";
 
 export default function Profile() {
   const {
@@ -26,6 +27,7 @@ export default function Profile() {
 
   const [displayName, setDisplayName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState();
   // TODO: choose better name
   const [pressed, setPressed] = useState(false);
 
@@ -126,6 +128,16 @@ export default function Profile() {
             marginTop: 40,
           }}
         />
+        <Text style={{ margin: 10 }}>Choose your language</Text>
+        <Picker
+          selectedValue={selectedLanguage}
+          onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
+          style={{ margin: 10, width: 200, height: 30, backgroundColor: "red" }}
+        >
+          <Picker.Item label="English" value="EN" />
+          <Picker.Item label="Russian" value="RU" />
+          <Picker.Item label="Japanese" value="JA" />
+        </Picker>
         {pressed && (
           <ActivityIndicator
             size="large"
