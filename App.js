@@ -56,7 +56,7 @@ function App() {
         <Stack.Navigator
           screenOptions={{
             headerStyle: {
-              backgroundColor: "red",
+              backgroundColor: colors.secondary,
             },
           }}
         >
@@ -99,7 +99,7 @@ function Home() {
         return {
           tabBarLabel: () => {
             if (route.name === "photo") {
-              return <Ionicons name="camera" size={20} color={"red"} />;
+              return <Ionicons name="camera" size={20} color={"white"} />;
             } else {
               return (
                 <Text style={{ color: colors.primary }}>
@@ -114,10 +114,10 @@ function Home() {
           },
           tabBarIndicatorStyle: {
             // backgroundColor: colors.primary,
-            backgroundColor: "green",
+            backgroundColor: colors.iconGray,
           },
           tabBarStyle: {
-            backgroundColor: "yellow",
+            backgroundColor: colors.secondary,
           },
         };
       }}
