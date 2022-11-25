@@ -1,5 +1,5 @@
 // @refresh reset
-import { View, Text, ImageBackground } from "react-native";
+import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { useRoute } from "@react-navigation/native";
@@ -17,8 +17,14 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useCallback } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
+import {
+  Actions,
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+} from "react-native-gifted-chat";
 import axios from "axios";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const randomId = nanoid();
 
@@ -200,9 +206,7 @@ export default function Chat() {
     await Promise.all(writes);
   }
 
-  useEffect(() => {
-    console.log(messages[0]);
-  }, [messages]);
+  function handlePhotoPicker() {}
 
   return (
     <ImageBackground
@@ -214,7 +218,84 @@ export default function Chat() {
         onSend={onSend}
         messages={messages}
         user={senderUser}
-        renderAvatar={null}
+        // renderAvatar={null}
+        renderActions={(props) => (
+          <Actions
+            {...props}
+            containerStyle={{
+              position: "absolute",
+              right: 50,
+              bottom: 5,
+              zIndex: 9999,
+            }}
+            onPressActionButton={handlePhotoPicker}
+            icon={() => (
+              <Ionicons name="camera" size={30} color={colors.primary} />
+            )}
+          />
+        )}
+        timeTextStyle={{ right: { color: colors.primary } }}
+        renderSend={(props) => {
+          const { text, messageIdGenerator, user, onSend } = props;
+          return (
+            <TouchableOpacity
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 40,
+                // backgroundColor: colors.iconGray,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 5,
+                marginRight: 5,
+              }}
+              onPress={() => {
+                if (text && onSend) {
+                  onSend({
+                    text: text.trim(),
+                    user,
+                    _id: messageIdGenerator(),
+                  });
+                }
+              }}
+            >
+              <MaterialCommunityIcons
+                name="send-circle-outline"
+                size={40}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+          );
+        }}
+        renderInputToolbar={(props) => (
+          <InputToolbar
+            {...props}
+            containerStyle={{
+              marginLeft: 10,
+              marginRight: 10,
+              marginBottom: 2,
+              borderRadius: 20,
+              paddingTop: 5,
+            }}
+          />
+        )}
+        renderBubble={(props) => (
+          <Bubble
+            {...props}
+            textStyle={{
+              right: { color: colors.secondary },
+              left: { color: colors.text },
+            }}
+            wrapperStyle={{
+              left: {
+                backgroundColor: colors.tertiary,
+              },
+              right: {
+                backgroundColor: colors.text,
+              },
+            }}
+          />
+        )}
       />
     </ImageBackground>
   );
