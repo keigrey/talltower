@@ -29,7 +29,7 @@ export default function ListItem({
         <Col
           style={{ width: 80, alignItems: "center", justifyContent: "center" }}
         >
-          <Avatar user={user} size={type === "contacts" ? 40 : 65} />
+          <Avatar user={user} size={type === "contacts" ? 40 : 50} />
         </Col>
         <Col style={{ marginLeft: 10 }}>
           <Row style={{ alignItems: "center" }}>
@@ -38,7 +38,7 @@ export default function ListItem({
                 style={{
                   fontWeight: "bold",
                   fontSize: 16,
-                  color: colors.primary,
+                  color: colors.text,
                 }}
               >
                 {user.contactName || user.displayName}
@@ -46,7 +46,7 @@ export default function ListItem({
             </Col>
             {time && (
               <Col style={{ alignItems: "flex-end" }}>
-                <Text style={{ color: colors.primary, fontSize: 11 }}>
+                <Text style={{ color: colors.text, fontSize: 11 }}>
                   {new Date(time.seconds * 1000).toLocaleDateString()}
                 </Text>
               </Col>
@@ -54,7 +54,7 @@ export default function ListItem({
           </Row>
           {description && (
             <Row style={{ marginTop: -5 }}>
-              <Text style={{ colors: colors.primary, fontSize: 13 }}>
+              <Text style={{ color: colors.text, fontSize: 13 }}>
                 {description}
               </Text>
             </Row>
