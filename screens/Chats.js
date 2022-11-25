@@ -8,6 +8,10 @@ import ListItem from "../components/ListItem";
 import useContacts from "../hooks/useHooks";
 
 export default function Chats() {
+  const {
+    theme: { colors },
+  } = useContext(GlobalContext);
+
   const { rooms, setRooms, setUnfilteredRooms } = useContext(GlobalContext);
   // TODO: rename to user for consistency
   const { currentUser } = auth;
@@ -55,18 +59,22 @@ export default function Chats() {
         flex: 1,
         padding: 5,
         paddingRight: 10,
-        backgroundColor: "skyblue",
+        backgroundColor: colors.background,
       }}
     >
-      <Text>Chats</Text>
       {rooms.map((room) => (
         <ListItem
           type="chat"
-          description={room.lastMessage.text}
+          description={
+            room.lastMessage.text.length > 35
+              ? `${room.lastMessage.text.substring(0, 35)}...`
+              : `${room.lastMessage.text.substring(0, 35)}`
+          }
           key={room.id}
           room={room}
           time={room.lastMessage.createdAt}
           user={getUserB(room.userB, contacts)}
+          style={{ color: "white" }}
         />
       ))}
       <ContactsFloatingIcon />
