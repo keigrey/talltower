@@ -183,8 +183,8 @@ export default function Chat() {
         //   translatedMessage: translatedText,
         // };
         // const messageText = [message.text, translatedText];
-        const messageText = `${translatedText}\n(${message.text})`;
-        // const messageText = message.text;
+        // const messageText = `${translatedText}\n(${message.text})`;
+        const messageText = `${translatedText}\n↳${message.text}`;
 
         message.text = messageText;
 
