@@ -8,8 +8,9 @@ import { db } from "../firebase";
 import { useRoute } from "@react-navigation/native";
 
 function ContactPreview({ contact, image }) {
-  const { rooms } = useContext(GlobalContext);
+  const { unfilteredRooms } = useContext(GlobalContext);
   const [user, setUser] = useState(contact);
+  // NEW VARIABLE
 
   useEffect(() => {
     // TODO: instead of query can try to access the document directly
@@ -35,7 +36,7 @@ function ContactPreview({ contact, image }) {
       type="contacts"
       user={user}
       image={image}
-      room={rooms.find((room) =>
+      room={unfilteredRooms.find((room) =>
         room.participantsArray.includes(contact.email)
       )}
       style={{ marginTop: 7 }}
