@@ -37,6 +37,7 @@ export default function Chat() {
   const userB = route.params.user;
 
   const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
+  const [userBLanguage, setUserBLanguage] = useState(null);
 
   const senderUser = currentUser.photoURL
     ? {
@@ -62,6 +63,16 @@ export default function Chat() {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (snapshot.docs.length) {
         setCurrentUserLanguage(snapshot.docs[0].data().language);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, "users"), where("email", "==", userB.email));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (snapshot.docs.length) {
+        setUserBLanguage(snapshot.docs[0].data().language);
       }
     });
     return () => unsubscribe();
@@ -124,7 +135,7 @@ export default function Chat() {
           return { ...message, createdAt: message.createdAt.toDate() };
         });
 
-      appendMessages(messages);
+      appendMessages(messagesFirestore);
     });
 
     return () => unsubscribe();
@@ -135,7 +146,7 @@ export default function Chat() {
       3440 + 1639 + 3982
     }-${1286699455 * 2 * 2}dc:fx`;
     const sourceLanguage = currentUserLanguage;
-    const targetLanguage = userB.userDoc.language;
+    const targetLanguage = userBLanguage;
     let optionsBody = [];
 
     const rawBody = {
@@ -167,17 +178,31 @@ export default function Chat() {
     const messages = await Promise.all(
       messagesNotTranslated.map(async (message) => {
         const translatedText = await translate(message.text);
-        const messageText = {
-          originalMessage: message.text,
-          translatedMessage: translatedText,
-        };
+        // const messageText = {
+        //   originalMessage: message.text,
+        //   translatedMessage: translatedText,
+        // };
+        // const messageText = [message.text, translatedText];
+        const messageText = `${translatedText}\n(${message.text})`;
+        // const messageText = message.text;
 
         message.text = messageText;
 
         return message;
       })
     );
+
+    const writes = messages.map((message) => addDoc(roomMessagesRef, message));
+    const lastMessage = messages[messages.length - 1];
+
+    writes.push(updateDoc(roomRef, { lastMessage }));
+
+    await Promise.all(writes);
   }
+
+  useEffect(() => {
+    console.log(messages[0]);
+  }, [messages]);
 
   return (
     <ImageBackground

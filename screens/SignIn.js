@@ -49,6 +49,7 @@ export default function SignIn() {
             width: 200,
           }}
         />
+        {/* TODO: password min length 6 chars */}
         <TextInput
           placeholder="Password"
           value={password}
