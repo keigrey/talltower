@@ -20,7 +20,16 @@ const palette = {
 export const theme = {
   colors: {
     background: palette.jet,
-    // foreground: palette.tealGreenDark,
+    textInput: palette.shadow,
+    textLight: palette.snow,
+    textDark: palette.charcoal,
+    textGrey: palette.mist,
+    textAccent: palette.heather,
+    bubbleLight: palette.ice,
+    bubbleDark: palette.shadow,
+    inactive: palette.onyx,
+
+    ////////////////////////
     primary: palette.jet,
     tertiary: palette.mist,
     secondary: palette.shadow,
@@ -30,6 +39,19 @@ export const theme = {
     iconGray: palette.mint,
   },
 };
+// export const theme = {
+//   colors: {
+//     background: palette.jet,
+//     // foreground: palette.tealGreenDark,
+//     primary: palette.jet,
+//     tertiary: palette.mist,
+//     secondary: palette.shadow,
+//     white: palette.ice,
+//     text: palette.snow,
+//     secondaryText: palette.charcoal,
+//     iconGray: palette.mint,
+//   },
+// };
 
 export async function pickImage() {
   let result = await ImagePicker.launchCameraAsync();
