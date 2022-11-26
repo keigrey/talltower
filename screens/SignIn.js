@@ -21,21 +21,34 @@ export default function SignIn() {
   const [mode, setMode] = useState("signIn");
 
   const styles = StyleSheet.create({
+    mainView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.background,
+    },
+    title: { color: colors.textLight, fontSize: 24, marginBottom: 20 },
+    logo: { width: 180, height: 180 },
     textInput: {
-      borderBottomColor: colors.primary,
-      borderBottomWidth: 2,
+      height: 35,
       width: 200,
+      borderRadius: 35,
+      paddingLeft: 15,
+      paddingRight: 15,
       color: colors.text,
-      backgroundColor: colors.secondary,
-      borderRadius: 20,
+      backgroundColor: colors.textInput,
     },
     button: {
+      height: 35,
+      width: 200,
+      borderRadius: 35,
       alignItems: "center",
-      backgroundColor: !password || !email ? colors.tertiary : colors.iconGray,
-      padding: 5,
+      justifyContent: "center",
+      backgroundColor:
+        !password || !email ? colors.inactive : colors.textAccent,
       marginTop: 20,
-      borderRadius: 20,
     },
+    clickableText: { color: colors.text, textAlign: "center" },
   });
 
   async function handlePress() {
@@ -48,20 +61,11 @@ export default function SignIn() {
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: colors.background,
-      }}
-    >
-      <Text style={{ color: colors.text, fontSize: 24, marginBottom: 20 }}>
-        Welcome to Talltower
-      </Text>
+    <View style={styles.mainView}>
+      <Text style={styles.title}>Welcome to Talltower</Text>
       <Image
         source={require("../assets/welcome-logo.png")}
-        style={{ width: 180, height: 180 }}
+        style={styles.logo}
         resizeMode="cover"
       />
       <View style={{ marginTop: 20 }}>
@@ -70,6 +74,7 @@ export default function SignIn() {
           value={email}
           onChangeText={setEmail}
           placeholderTextColor={colors.tertiary}
+          selectionColor={colors.textAccent}
           style={styles.textInput}
         />
         {/* TODO: password min length 6 chars */}
@@ -78,7 +83,8 @@ export default function SignIn() {
           value={password}
           onChangeText={setPassword}
           placeholderTextColor={colors.tertiary}
-          style={{ ...styles.textInput, marginTop: 20 }}
+          selectionColor={colors.textAccent}
+          style={{ ...styles.textInput, marginTop: 15 }}
           secureTextEntry={true}
         />
       </View>
@@ -88,7 +94,9 @@ export default function SignIn() {
           disabled={!password || !email}
           style={styles.button}
         >
-          <Text>{mode === "signUp" ? "Sign Up" : "Sign In"}</Text>
+          <Text style={{ color: "white" }}>
+            {mode === "signUp" ? "Sign Up" : "Sign In"}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
@@ -96,10 +104,10 @@ export default function SignIn() {
           }
           style={{ marginTop: 15 }}
         >
-          <Text style={{ color: colors.text }}>
+          <Text style={styles.clickableText}>
             {mode === "signUp"
-              ? "Already have an account? Sign In"
-              : "Don't have an account? Sign Up"}
+              ? "Already have an account?\nSign In"
+              : "Don't have an account?\nSign Up"}
           </Text>
         </TouchableOpacity>
       </View>
