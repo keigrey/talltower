@@ -15,16 +15,19 @@ const palette = {
   mint: "#58ad89", // select green
   heather: "#8654ad", // select purple
   black: "#000000",
+  stone: "#525452",
 };
 
 export const theme = {
   colors: {
     background: palette.jet,
+    uiLight: palette.snow,
     textInput: palette.shadow,
     textLight: palette.snow,
     textDark: palette.charcoal,
     textGrey: palette.mist,
-    textAccent: palette.heather,
+    textTime: palette.stone,
+    accent: palette.heather,
     bubbleLight: palette.ice,
     bubbleDark: palette.shadow,
     inactive: palette.onyx,
