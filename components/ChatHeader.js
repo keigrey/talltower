@@ -13,9 +13,9 @@ export default function ChatHeader() {
   const route = useRoute();
 
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", marginLeft: -20 }}>
       <View>
-        <Avatar size={40} user={route.params.user} />
+        <Avatar size={35} user={route.params.user} />
       </View>
       <View
         style={{
@@ -24,7 +24,7 @@ export default function ChatHeader() {
           justifyContent: "center",
         }}
       >
-        <Text style={{ color: colors.primary, fontSize: 18 }}>
+        <Text style={{ color: colors.textLight, fontSize: 18 }}>
           {route.params.user.contactName || route.params.user.displayName}
         </Text>
       </View>
