@@ -1,5 +1,13 @@
 // @refresh reset
-import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { useRoute } from "@react-navigation/native";
@@ -22,9 +30,12 @@ import {
   Bubble,
   GiftedChat,
   InputToolbar,
+  Send,
+  Composer,
 } from "react-native-gifted-chat";
 import axios from "axios";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 
 const randomId = nanoid();
 
@@ -32,6 +43,8 @@ export default function Chat() {
   const {
     theme: { colors },
   } = useContext(Context);
+
+  const { height, width } = useWindowDimensions();
 
   const [roomHash, setRoomHash] = useState("");
   const [messages, setMessages] = useState([]);
@@ -208,95 +221,120 @@ export default function Chat() {
 
   function handlePhotoPicker() {}
 
+  const styles = StyleSheet.create({
+    mainView: { flex: 1, backgroundColor: colors.background },
+    cameraActionIcon: {
+      position: "absolute",
+      right: 50,
+      bottom: 5,
+      zIndex: 9999,
+    },
+    inputToolbar: {
+      height: 50,
+      backgroundColor: colors.textInput,
+      color: "red",
+      marginLeft: 10,
+      marginRight: 10,
+      marginBottom: 10,
+      marginTop: 29,
+      borderRadius: 50,
+      paddingTop: 5,
+      borderTopWidth: 0,
+      paddingLeft: 7,
+    },
+    sendButton: {
+      height: 40,
+      width: 40,
+      borderRadius: 40,
+      // backgroundColor: colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 5,
+      marginRight: 5,
+      borderWidth: 0,
+    },
+  });
+
   return (
-    <ImageBackground
-      resizeMode="cover"
-      source={require("../assets/chat-background.png")}
-      style={{ flex: 1 }}
-    >
+    <View style={styles.mainView}>
+      {/* <ImageBackground
+        resizeMode="cover"
+        source={require("../assets/chat-background.png")}
+        style={{ flex: 1 }}
+      > */}
       <GiftedChat
         onSend={onSend}
         messages={messages}
         user={senderUser}
-        // renderAvatar={null}
-        renderActions={(props) => (
-          <Actions
-            {...props}
-            containerStyle={{
-              position: "absolute",
-              right: 50,
-              bottom: 5,
-              zIndex: 9999,
-            }}
-            onPressActionButton={handlePhotoPicker}
-            icon={() => (
-              <Ionicons name="camera" size={30} color={colors.primary} />
-            )}
-          />
-        )}
-        timeTextStyle={{ right: { color: colors.primary } }}
+        renderAvatar={null}
+        wrapInSafeArea={false}
+        // renderActions={(props) => (
+        //   <Actions
+        //     {...props}
+        //     containerStyle={styles.cameraActionIcon}
+        //     onPressActionButton={handlePhotoPicker}
+        //     icon={() => (
+        //       <Ionicons name="camera" size={30} color={colors.primary} />
+        //     )}
+        //   />
+        // )}
+        timeTextStyle={{
+          right: { color: colors.textTime },
+          left: { color: colors.textTime },
+        }}
         renderSend={(props) => {
           const { text, messageIdGenerator, user, onSend } = props;
           return (
             <TouchableOpacity
-              style={{
-                height: 40,
-                width: 40,
-                borderRadius: 40,
-                // backgroundColor: colors.iconGray,
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 5,
-                marginRight: 5,
-              }}
+              style={styles.sendButton}
               onPress={() => {
                 if (text && onSend) {
-                  onSend({
-                    text: text.trim(),
-                    user,
-                    _id: messageIdGenerator(),
-                  });
+                  onSend(
+                    {
+                      text: text.trim(),
+                      user,
+                      _id: messageIdGenerator(),
+                    },
+                    true
+                  );
                 }
               }}
             >
               <MaterialCommunityIcons
-                name="send-circle-outline"
-                size={40}
-                color={colors.primary}
+                name="send"
+                size={24}
+                color={text ? colors.accent : colors.inactive}
               />
             </TouchableOpacity>
           );
         }}
         renderInputToolbar={(props) => (
-          <InputToolbar
-            {...props}
-            containerStyle={{
-              marginLeft: 10,
-              marginRight: 10,
-              marginBottom: 2,
-              borderRadius: 20,
-              paddingTop: 5,
-            }}
-          />
+          <InputToolbar {...props} containerStyle={styles.inputToolbar} />
+        )}
+        renderComposer={(props) => (
+          <Composer {...props} textInputStyle={{ color: "white" }} />
         )}
         renderBubble={(props) => (
           <Bubble
             {...props}
             textStyle={{
-              right: { color: colors.secondary },
-              left: { color: colors.text },
+              right: { color: colors.textDark },
+              left: { color: colors.textLight },
             }}
             wrapperStyle={{
               left: {
-                backgroundColor: colors.tertiary,
+                backgroundColor: colors.bubbleDark,
               },
               right: {
-                backgroundColor: colors.text,
+                backgroundColor: colors.bubbleLight,
               },
             }}
           />
         )}
+        renderChatFooter={(props) => <View style={{ height: 20 }}></View>}
       />
-    </ImageBackground>
+      {/* </ImageBackground> */}
+      <StatusBar style="light" />
+    </View>
   );
 }
