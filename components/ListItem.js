@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Grid, Row, Col } from "react-native-easy-grid";
@@ -20,12 +20,22 @@ export default function ListItem({
 
   const navigation = useNavigation();
 
+  const styles = StyleSheet.create({
+    grid: { maxHeight: 80 },
+    touchable: { height: 80, ...style },
+    columnText: {
+      fontWeight: "bold",
+      fontSize: 16,
+      color: colors.textLight,
+    },
+  });
+
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("chat", { user, room, image })}
-      style={{ height: 80, ...style }}
+      style={styles.touchable}
     >
-      <Grid style={{ maxHeight: 80 }}>
+      <Grid style={styles.grid}>
         <Col
           style={{ width: 80, alignItems: "center", justifyContent: "center" }}
         >
@@ -34,13 +44,7 @@ export default function ListItem({
         <Col style={{ marginLeft: 10 }}>
           <Row style={{ alignItems: "center" }}>
             <Col>
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  color: colors.text,
-                }}
-              >
+              <Text style={styles.columnText}>
                 {user.contactName || user.displayName}
               </Text>
             </Col>
@@ -54,7 +58,7 @@ export default function ListItem({
           </Row>
           {description && (
             <Row style={{ marginTop: -5 }}>
-              <Text style={{ color: colors.text, fontSize: 13 }}>
+              <Text style={{ color: colors.textLight, fontSize: 13 }}>
                 {description}
               </Text>
             </Row>
