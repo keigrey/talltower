@@ -5,8 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Keyboard,
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Context from "../context/Context";
 import { signIn, signUp } from "../firebase";
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +20,21 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState("signIn");
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardOpen(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardOpen(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const styles = StyleSheet.create({
     mainView: {
@@ -35,7 +51,7 @@ export default function SignIn() {
       borderRadius: 35,
       paddingLeft: 15,
       paddingRight: 15,
-      color: colors.text,
+      color: colors.textLight,
       backgroundColor: colors.textInput,
     },
     button: {
@@ -44,14 +60,15 @@ export default function SignIn() {
       borderRadius: 35,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor:
-        !password || !email ? colors.inactive : colors.textAccent,
+      backgroundColor: !password || !email ? colors.inactive : colors.accent,
       marginTop: 20,
     },
-    clickableText: { color: colors.text, textAlign: "center" },
+    clickableText: { color: colors.textLight, textAlign: "center" },
   });
 
   async function handlePress() {
+    Keyboard.dismiss();
+
     if (mode === "signUp") {
       await signUp(email, password);
     }
@@ -62,19 +79,23 @@ export default function SignIn() {
 
   return (
     <View style={styles.mainView}>
-      <Text style={styles.title}>Welcome to Talltower</Text>
-      <Image
-        source={require("../assets/welcome-logo.png")}
-        style={styles.logo}
-        resizeMode="cover"
-      />
+      {!keyboardOpen && (
+        <>
+          <Text style={styles.title}>Welcome to Talltower</Text>
+          <Image
+            source={require("../assets/welcome-logo.png")}
+            style={styles.logo}
+            resizeMode="cover"
+          />
+        </>
+      )}
       <View style={{ marginTop: 20 }}>
         <TextInput
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          placeholderTextColor={colors.tertiary}
-          selectionColor={colors.textAccent}
+          placeholderTextColor={colors.textGrey}
+          selectionColor={colors.accent}
           style={styles.textInput}
         />
         {/* TODO: password min length 6 chars */}
@@ -82,8 +103,8 @@ export default function SignIn() {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
-          placeholderTextColor={colors.tertiary}
-          selectionColor={colors.textAccent}
+          placeholderTextColor={colors.textGrey}
+          selectionColor={colors.accent}
           style={{ ...styles.textInput, marginTop: 15 }}
           secureTextEntry={true}
         />
@@ -94,7 +115,7 @@ export default function SignIn() {
           disabled={!password || !email}
           style={styles.button}
         >
-          <Text style={{ color: "white" }}>
+          <Text style={{ color: colors.textLight }}>
             {mode === "signUp" ? "Sign Up" : "Sign In"}
           </Text>
         </TouchableOpacity>
