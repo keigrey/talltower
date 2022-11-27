@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Keyboard,
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import Context from "../context/Context";
@@ -32,8 +32,24 @@ export default function Profile() {
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   // TODO: choose better name
   const [pressed, setPressed] = useState(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardOpen(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardOpen(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   async function handlePress() {
+    Keyboard.dismiss();
     setPressed(true);
     ///////////////////////////////////////////////
     const user = auth.currentUser;
@@ -102,7 +118,10 @@ export default function Profile() {
       padding: 12,
       borderRadius: 35,
     },
-    title: { fontSize: 22, color: colors.text },
+    title: {
+      fontSize: 22,
+      color: colors.text,
+    },
     subText: { fontSize: 14, color: colors.text, marginTop: 20 },
     imagePickerOutline: {
       marginTop: 30,
@@ -132,7 +151,7 @@ export default function Profile() {
       paddingRight: 15,
       color: colors.text,
       backgroundColor: colors.textInput,
-      marginTop: 40,
+      marginTop: keyboardOpen ? 20 : 40,
     },
     languagePickerView: {
       backgroundColor: colors.textInput,
@@ -171,12 +190,16 @@ export default function Profile() {
   return (
     <React.Fragment>
       <StatusBar style="auto" />
-      <View style={styles.fillView}>
+      <View blur style={styles.fillView}>
         <View style={styles.mainView}>
-          <Text style={styles.title}>Profile Info</Text>
-          <Text style={styles.subText}>
-            Please provide your name and an optional profile photo
-          </Text>
+          {!keyboardOpen && (
+            <>
+              <Text style={styles.title}>Profile Info</Text>
+              <Text style={styles.subText}>
+                Please provide your name and an optional profile photo
+              </Text>
+            </>
+          )}
           <View style={styles.imagePickerOutline}>
             <TouchableOpacity
               onPress={handleProfilePicture}
