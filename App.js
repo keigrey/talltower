@@ -46,6 +46,8 @@ function App() {
     return <Text>Loading..</Text>;
   }
 
+  const styles = StyleSheet.create({});
+
   return (
     <NavigationContainer>
       {!currUser ? (
@@ -56,8 +58,15 @@ function App() {
         <Stack.Navigator
           screenOptions={{
             headerStyle: {
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.textLight,
             },
+            headerBackImage: () => (
+              <Ionicons
+                name="chevron-back-circle-outline"
+                size={30}
+                color={colors.textLight}
+              />
+            ),
           }}
         >
           {!currUser.displayName && (
@@ -72,18 +81,27 @@ function App() {
             component={Home}
             options={{ title: "Talltower" }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="contacts"
             component={Contacts}
             options={{ title: "Select Contacts" }}
-          />
+          /> */}
           <Stack.Screen
             name="chat"
             component={Chat}
-            options={{ headerTitle: (props) => <ChatHeader {...props} /> }}
+            options={{
+              headerTitle: (props) => <ChatHeader {...props} />,
+              headerStyle: {
+                backgroundColor: colors.background,
+                elevation: 0,
+                shadowOpacity: 0,
+                // height: 120,
+              },
+            }}
           />
         </Stack.Navigator>
       )}
+      <StatusBar style="light" />
     </NavigationContainer>
   );
 }
@@ -99,31 +117,34 @@ function Home() {
         return {
           tabBarLabel: () => {
             if (route.name === "photo") {
-              return <Ionicons name="camera" size={20} color={"white"} />;
+              return (
+                <Ionicons name="camera" size={20} color={colors.textLight} />
+              );
             } else {
               return (
-                <Text style={{ color: colors.primary }}>
-                  {route.name.toLocaleUpperCase()}
+                <Text style={{ color: colors.textLight }}>
+                  {route.name[0].toLocaleUpperCase() + route.name.slice(1)}
                 </Text>
               );
             }
           },
           tabBarShowIcon: true,
           tabBarLabelStyle: {
-            color: colors.primary,
+            color: colors.accent,
           },
           tabBarIndicatorStyle: {
-            // backgroundColor: colors.primary,
-            backgroundColor: colors.iconGray,
+            backgroundColor: colors.uiLight,
+            height: "100%",
           },
           tabBarStyle: {
-            backgroundColor: colors.secondary,
+            backgroundColor: colors.background,
           },
         };
       }}
       initialRouteName="chats"
     >
-      <Tab.Screen name="photo" component={Photo} />
+      {/* <Tab.Screen name="photo" component={Photo} /> */}
+      <Tab.Screen name="contacts" component={Contacts} />
       <Tab.Screen name="chats" component={Chats} />
     </Tab.Navigator>
   );
