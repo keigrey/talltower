@@ -6,6 +6,7 @@ import GlobalContext from "../context/Context";
 import ContactsFloatingIcon from "../components/ContactsFloatingIcon";
 import ListItem from "../components/ListItem";
 import useContacts from "../hooks/useHooks";
+import { StatusBar } from "expo-status-bar";
 
 export default function Chats() {
   const {
@@ -77,7 +78,8 @@ export default function Chats() {
           style={{ color: "white" }}
         />
       ))}
-      <ContactsFloatingIcon />
+      {/* <ContactsFloatingIcon /> */}
+      <StatusBar style="dark" />
     </View>
   );
 }
