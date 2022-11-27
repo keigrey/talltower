@@ -5,6 +5,8 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  StyleSheet,
+  Keyboard,
 } from "react-native";
 import React, { useContext, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -27,8 +29,7 @@ export default function Profile() {
 
   const [displayName, setDisplayName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
-  // TODO: Default language should be empty
-  const [selectedLanguage, setSelectedLanguage] = useState("EN");
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
   // TODO: choose better name
   const [pressed, setPressed] = useState(false);
 
@@ -47,7 +48,6 @@ export default function Profile() {
       photoURL = url;
     }
 
-    // TODO: add user language
     const userData = {
       displayName,
       email: user.email,
@@ -76,92 +76,179 @@ export default function Profile() {
     }
   }
 
+  const styles = StyleSheet.create({
+    fillView: {
+      flex: 1,
+    },
+    mainView: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: Constants.statusBarHeight + 20,
+      padding: 20,
+      backgroundColor: colors.background,
+    },
+    loadingView: {
+      backgroundColor: colors.bubbleLight,
+      opacity: 0.7,
+      position: "absolute",
+      height: "100%",
+      width: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    throbber: {
+      backgroundColor: colors.bubbleDark,
+      padding: 12,
+      borderRadius: 35,
+    },
+    title: { fontSize: 22, color: colors.text },
+    subText: { fontSize: 14, color: colors.text, marginTop: 20 },
+    imagePickerOutline: {
+      marginTop: 30,
+      width: 120,
+      height: 120,
+      padding: 15,
+      borderRadius: 120,
+      borderWidth: 2,
+      borderColor: colors.textGrey,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    imagePicker: {
+      width: 100,
+      height: 100,
+      borderRadius: 100,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.accent,
+    },
+    selectedImage: { width: "100%", height: "100%", borderRadius: 120 },
+    textInput: {
+      height: 35,
+      width: 200,
+      borderRadius: 35,
+      paddingLeft: 15,
+      paddingRight: 15,
+      color: colors.text,
+      backgroundColor: colors.textInput,
+      marginTop: 40,
+    },
+    languagePickerView: {
+      backgroundColor: colors.textInput,
+      width: 200,
+      height: 35,
+      borderRadius: 35,
+      overflow: "hidden",
+      justifyContent: "center",
+      paddingLeft: 8,
+      marginTop: 20,
+    },
+    languagePicker: {
+      width: "100%",
+      backgroundColor: colors.textInput,
+      color: selectedLanguage ? colors.textLight : colors.textGrey,
+    },
+    languagePickerFont: {
+      size: 13.5,
+    },
+
+    button: {
+      height: 35,
+      width: 80,
+      borderRadius: 35,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: !(displayName && selectedLanguage)
+        ? colors.inactive
+        : colors.accent,
+      padding: 5,
+      marginTop: "auto",
+    },
+    clickableText: { color: colors.textLight, textAlign: "center" },
+  });
+
   return (
     <React.Fragment>
       <StatusBar style="auto" />
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          paddingTop: Constants.statusBarHeight + 20,
-          padding: 20,
-        }}
-      >
-        <Text style={{ fontSize: 22, color: colors.backgound }}>
-          Profile Info
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.backgound, marginTop: 20 }}>
-          Please provide your name and an optional profile photo
-        </Text>
-        <TouchableOpacity
-          onPress={handleProfilePicture}
-          style={{
-            marginTop: 30,
-            width: 120,
-            height: 120,
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 120,
-            backgroundColor: "red",
-          }}
-        >
-          {!selectedImage ? (
-            <MaterialCommunityIcons
-              name="camera-plus"
-              color={colors.iconGray}
-              size={45}
-            />
-          ) : (
-            <Image
-              source={{ uri: selectedImage }}
-              style={{ width: "100%", height: "100%", borderRadius: 120 }}
-            />
-          )}
-        </TouchableOpacity>
-        <TextInput
-          placeholder="Your name"
-          value={displayName}
-          onChangeText={setDisplayName}
-          style={{
-            borderBottomColor: colors.primary,
-            borderBottomWidth: 2,
-            width: "100%",
-            marginTop: 40,
-          }}
-        />
-        <Text style={{ margin: 10 }}>Choose your language</Text>
-        <Picker
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
-          style={{ margin: 10, width: 200, height: 30, backgroundColor: "red" }}
-        >
-          <Picker.Item label="English" value="EN" />
-          <Picker.Item label="Russian" value="RU" />
-          <Picker.Item label="Japanese" value="JA" />
-        </Picker>
-        {pressed && (
-          <ActivityIndicator
-            size="large"
-            color="#2b2b2b"
-            style={{
-              marginTop: 40,
-            }}
+      <View style={styles.fillView}>
+        <View style={styles.mainView}>
+          <Text style={styles.title}>Profile Info</Text>
+          <Text style={styles.subText}>
+            Please provide your name and an optional profile photo
+          </Text>
+          <View style={styles.imagePickerOutline}>
+            <TouchableOpacity
+              onPress={handleProfilePicture}
+              style={styles.imagePicker}
+            >
+              {!selectedImage ? (
+                <MaterialCommunityIcons
+                  name="camera-plus"
+                  color={colors.textLight}
+                  size={40}
+                />
+              ) : (
+                <Image
+                  source={{ uri: selectedImage }}
+                  style={styles.selectedImage}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          <TextInput
+            placeholder="Your name"
+            value={displayName}
+            onChangeText={setDisplayName}
+            placeholderTextColor={colors.textGrey}
+            selectionColor={colors.accent}
+            style={styles.textInput}
           />
+          <View style={styles.languagePickerView}>
+            <Picker
+              selectedValue={selectedLanguage}
+              onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
+              style={styles.languagePicker}
+            >
+              <Picker.Item
+                label="Choose you language"
+                value={null}
+                style={{ fontSize: styles.languagePickerFont.size }}
+              />
+              <Picker.Item
+                label="English"
+                value="EN"
+                style={{ fontSize: styles.languagePickerFont.size }}
+              />
+              <Picker.Item
+                label="Russian"
+                value="RU"
+                style={{ fontSize: styles.languagePickerFont.size }}
+              />
+              <Picker.Item
+                label="Japanese"
+                value="JA"
+                style={{ fontSize: styles.languagePickerFont.size }}
+              />
+            </Picker>
+          </View>
+          <TouchableOpacity
+            onPress={handlePress}
+            disabled={!(displayName && selectedLanguage)}
+            style={styles.button}
+          >
+            <Text style={styles.clickableText}>Next</Text>
+          </TouchableOpacity>
+        </View>
+        {pressed && (
+          <View style={styles.loadingView}>
+            <ActivityIndicator
+              size="large"
+              color={colors.textLight}
+              style={styles.throbber}
+            />
+          </View>
         )}
-        <TouchableOpacity
-          onPress={handlePress}
-          disabled={!displayName}
-          style={{
-            alignItems: "center",
-            backgroundColor: !displayName ? colors.tertiary : colors.text,
-            padding: 5,
-            marginTop: "auto",
-            width: 80,
-          }}
-        >
-          <Text>Next</Text>
-        </TouchableOpacity>
       </View>
     </React.Fragment>
   );
