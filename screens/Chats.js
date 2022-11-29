@@ -75,7 +75,7 @@ export default function Chats() {
           room={room}
           time={room.lastMessage.createdAt}
           user={getUserB(room.userB, contacts)}
-          style={{ color: "white" }}
+          style={{ color: colors.textLight }}
         />
       ))}
       {/* <ContactsFloatingIcon /> */}
