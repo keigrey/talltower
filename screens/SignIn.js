@@ -21,6 +21,9 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState("signIn");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [badEmail, setBadEmail] = useState(false);
+  const [badPassword, setBadPassword] = useState(false);
+  const [firebaseErrorCode, setFirebaseErrorCode] = useState(null);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -53,6 +56,7 @@ export default function SignIn() {
       paddingRight: 15,
       color: colors.textLight,
       backgroundColor: colors.textInput,
+      borderColor: colors.error,
     },
     button: {
       height: 35,
@@ -64,16 +68,65 @@ export default function SignIn() {
       marginTop: 20,
     },
     clickableText: { color: colors.textLight, textAlign: "center" },
+    textError: {
+      color: colors.error,
+      fontSize: 12,
+      width: 200,
+      paddingLeft: 15,
+    },
   });
 
   async function handlePress() {
     Keyboard.dismiss();
+    setBadPassword(false);
+    setBadEmail(false);
+    setFirebaseErrorCode(null);
 
     if (mode === "signUp") {
-      await signUp(email, password);
+      try {
+        await signUp(email.trim(), password);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        if (errorCode === "auth/weak-password") {
+          setBadPassword(true);
+        } else if (errorCode === "auth/invalid-email") {
+          setBadEmail(true);
+        } else if (errorCode === "auth/email-already-in-use") {
+          setBadEmail(true);
+        }
+
+        setFirebaseErrorCode(errorCode);
+      }
     }
     if (mode === "signIn") {
-      await signIn(email, password);
+      try {
+        await signIn(email.trim(), password);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        if (errorCode === "auth/wrong-password") {
+          setBadPassword(true);
+        } else if (errorCode === "auth/invalid-email") {
+          setBadEmail(true);
+        } else if (errorCode === "auth/user-not-found") {
+          setBadEmail(true);
+        }
+
+        setFirebaseErrorCode(errorCode);
+      }
+    }
+  }
+
+  function getErrorMessage() {
+    if (firebaseErrorCode === "auth/invalid-email") {
+      return "Invalid email";
+    } else if (firebaseErrorCode === "auth/email-already-in-use") {
+      return "Email is already in use";
+    } else if (firebaseErrorCode === "auth/user-not-found") {
+      return "User not found";
     }
   }
 
@@ -90,22 +143,34 @@ export default function SignIn() {
         </>
       )}
       <View style={{ marginTop: 20 }}>
+        {badEmail && <Text style={styles.textError}>{getErrorMessage()}</Text>}
         <TextInput
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          keyboardType="email-address"
           placeholderTextColor={colors.textGrey}
           selectionColor={colors.accent}
-          style={styles.textInput}
+          style={{
+            ...styles.textInput,
+            marginBottom: 15,
+            borderWidth: badEmail ? 1 : 0,
+          }}
         />
-        {/* TODO: password min length 6 chars */}
+        {badPassword && (
+          <Text style={styles.textError}>
+            {firebaseErrorCode === "auth/weak-password"
+              ? "Password should be at least 6 characters long"
+              : "Wrong password"}
+          </Text>
+        )}
         <TextInput
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           placeholderTextColor={colors.textGrey}
           selectionColor={colors.accent}
-          style={{ ...styles.textInput, marginTop: 15 }}
+          style={{ ...styles.textInput, borderWidth: badPassword ? 1 : 0 }}
           secureTextEntry={true}
         />
       </View>
