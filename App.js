@@ -156,7 +156,8 @@ export default function Main() {
     require("./assets/user-icon-dark.png"),
     require("./assets/user-icon-square-dark.png"),
     require("./assets/chat-background.png"),
-    require("./assets/welcome-logo.png")
+    require("./assets/welcome-logo.png"),
+    require("./assets/logo.png")
   );
 
   if (!assets) {

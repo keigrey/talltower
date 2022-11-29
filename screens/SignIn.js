@@ -134,7 +134,12 @@ export default function SignIn() {
     <View style={styles.mainView}>
       {!keyboardOpen && (
         <>
-          <Text style={styles.title}>Welcome to Talltower</Text>
+          {/* <Text style={styles.title}>Welcome to Talltower</Text> */}
+          <Image
+            source={require("../assets/logo.png")}
+            style={{ width: 180, height: 100, marginBottom: 15 }}
+            resizeMode="contain"
+          />
           <Image
             source={require("../assets/welcome-logo.png")}
             style={styles.logo}
