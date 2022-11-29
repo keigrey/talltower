@@ -18,7 +18,7 @@ import Contacts from "./screens/Contacts";
 import Chat from "./screens/Chat";
 import ChatHeader from "./components/ChatHeader";
 
-// LogBox.ignoreLogs(["Setting a timer"]);
+LogBox.ignoreLogs(["Sending"]);
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -57,6 +57,7 @@ function App() {
       ) : (
         <Stack.Navigator
           screenOptions={{
+            headerBackTitleVisible: false,
             headerStyle: {
               backgroundColor: colors.textLight,
             },
