@@ -33,6 +33,7 @@ export const theme = {
     bubbleDark: palette.shadow,
     inactive: palette.onyx,
     error: palette.wine,
+    unread: palette.mint,
 
     ////////////////////////
     primary: palette.jet,
