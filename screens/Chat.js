@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   useWindowDimensions,
+  Keyboard,
+  Platform,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase";
@@ -48,6 +50,8 @@ export default function Chat() {
 
   const [roomHash, setRoomHash] = useState("");
   const [messages, setMessages] = useState([]);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const { currentUser } = auth;
   const route = useRoute();
@@ -73,6 +77,22 @@ export default function Chat() {
 
   const roomRef = doc(db, "rooms", roomId);
   const roomMessagesRef = collection(db, "rooms", roomId, "messages");
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", (e) => {
+      setKeyboardOpen(true);
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardOpen(false);
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     const q = query(
@@ -232,11 +252,12 @@ export default function Chat() {
     inputToolbar: {
       height: 50,
       backgroundColor: colors.textInput,
-      color: "red",
+      // color: "red",
       marginLeft: 10,
       marginRight: 10,
-      marginBottom: 10,
-      marginTop: 29,
+      marginBottom:
+        Platform.OS === "ios" ? (keyboardOpen ? keyboardHeight + 30 : 20) : 10,
+      marginTop: Platform.OS === "ios" ? -10 : 0,
       borderRadius: 50,
       paddingTop: 5,
       borderTopWidth: 0,
@@ -312,7 +333,7 @@ export default function Chat() {
           <InputToolbar {...props} containerStyle={styles.inputToolbar} />
         )}
         renderComposer={(props) => (
-          <Composer {...props} textInputStyle={{ color: "white" }} />
+          <Composer {...props} textInputStyle={{ color: colors.textLight }} />
         )}
         renderBubble={(props) => (
           <Bubble
@@ -331,7 +352,13 @@ export default function Chat() {
             }}
           />
         )}
-        renderChatFooter={(props) => <View style={{ height: 20 }}></View>}
+        renderChatFooter={(props) => (
+          <View
+            style={{
+              height: Platform.OS === "ios" ? (keyboardOpen ? 13 : 30) : 20,
+            }}
+          ></View>
+        )}
       />
       {/* </ImageBackground> */}
       <StatusBar style="light" />
