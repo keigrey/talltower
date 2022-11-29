@@ -16,6 +16,7 @@ const palette = {
   heather: "#8654ad", // select purple
   black: "#000000",
   stone: "#525452",
+  wine: "#8c0034",
 };
 
 export const theme = {
@@ -31,6 +32,7 @@ export const theme = {
     bubbleLight: palette.ice,
     bubbleDark: palette.shadow,
     inactive: palette.onyx,
+    error: palette.wine,
 
     ////////////////////////
     primary: palette.jet,
@@ -57,11 +59,21 @@ export const theme = {
 // };
 
 export async function pickImage() {
+  let result = await ImagePicker.launchImageLibraryAsync();
+  return result;
+}
+
+export async function takePhoto() {
   let result = await ImagePicker.launchCameraAsync();
   return result;
 }
 
 export async function askForPermission() {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  return status;
+}
+
+export async function askForPermissionCamera() {
   const { status } = await ImagePicker.requestCameraPermissionsAsync();
   return status;
 }

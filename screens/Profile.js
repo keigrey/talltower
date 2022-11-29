@@ -12,8 +12,14 @@ import React, { useContext, useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import Context from "../context/Context";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { pickImage, askForPermission, uploadImage } from "../utils";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  pickImage,
+  askForPermission,
+  uploadImage,
+  askForPermissionCamera,
+  takePhoto,
+} from "../utils";
 import { auth, db } from "../firebase";
 import { updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -92,6 +98,16 @@ export default function Profile() {
     }
   }
 
+  async function handleProfilePictureCamera() {
+    const permissionStatus = await askForPermissionCamera();
+    if (permissionStatus === "granted") {
+      const result = await takePhoto();
+      if (!result.cancelled) {
+        setSelectedImage(result.uri);
+      }
+    }
+  }
+
   const styles = StyleSheet.create({
     fillView: {
       flex: 1,
@@ -124,7 +140,6 @@ export default function Profile() {
     },
     subText: { fontSize: 14, color: colors.text, marginTop: 20 },
     imagePickerOutline: {
-      marginTop: 30,
       width: 120,
       height: 120,
       padding: 15,
@@ -200,24 +215,37 @@ export default function Profile() {
               </Text>
             </>
           )}
-          <View style={styles.imagePickerOutline}>
+          <View style={{ marginTop: keyboardOpen ? 5 : 30 }}>
             <TouchableOpacity
-              onPress={handleProfilePicture}
-              style={styles.imagePicker}
+              onPress={handleProfilePictureCamera}
+              style={{ alignSelf: "flex-end" }}
             >
-              {!selectedImage ? (
-                <MaterialCommunityIcons
-                  name="camera-plus"
-                  color={colors.textLight}
-                  size={40}
-                />
-              ) : (
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={styles.selectedImage}
-                />
-              )}
+              <MaterialCommunityIcons
+                name="camera-plus"
+                color={colors.accent}
+                size={20}
+              />
             </TouchableOpacity>
+
+            <View style={styles.imagePickerOutline}>
+              <TouchableOpacity
+                onPress={handleProfilePicture}
+                style={styles.imagePicker}
+              >
+                {!selectedImage ? (
+                  <MaterialIcons
+                    name="add-photo-alternate"
+                    size={40}
+                    color={colors.textLight}
+                  />
+                ) : (
+                  <Image
+                    source={{ uri: selectedImage }}
+                    style={styles.selectedImage}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
           <TextInput
             placeholder="Your name"
