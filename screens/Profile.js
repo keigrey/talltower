@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Keyboard,
+  Platform,
 } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -39,13 +40,16 @@ export default function Profile() {
   // TODO: choose better name
   const [pressed, setPressed] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", (e) => {
       setKeyboardOpen(true);
+      setKeyboardHeight(e.endCoordinates.height);
     });
     const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
       setKeyboardOpen(false);
+      setKeyboardHeight(0);
     });
 
     return () => {
@@ -171,16 +175,17 @@ export default function Profile() {
     languagePickerView: {
       backgroundColor: colors.textInput,
       width: 200,
-      height: 35,
+      height: Platform.OS === "ios" ? 150 : 35,
       borderRadius: 35,
       overflow: "hidden",
       justifyContent: "center",
-      paddingLeft: 8,
+      paddingLeft: Platform.OS === "ios" ? 0 : 8,
       marginTop: 20,
     },
     languagePicker: {
       width: "100%",
-      backgroundColor: colors.textInput,
+      backgroundColor:
+        Platform.OS === "ios" ? colors.textInput : colors.textInput,
       color: selectedLanguage ? colors.textLight : colors.textGrey,
     },
     languagePickerFont: {
@@ -198,6 +203,8 @@ export default function Profile() {
         : colors.accent,
       padding: 5,
       marginTop: "auto",
+      marginBottom:
+        Platform.OS === "ios" ? (keyboardOpen ? keyboardHeight + 10 : 0) : 0,
     },
     clickableText: { color: colors.textLight, textAlign: "center" },
   });
@@ -262,21 +269,33 @@ export default function Profile() {
               style={styles.languagePicker}
             >
               <Picker.Item
+                color={
+                  Platform.OS === "ios" ? colors.textLight : colors.textTime
+                }
                 label="Choose you language"
                 value={null}
                 style={{ fontSize: styles.languagePickerFont.size }}
               />
               <Picker.Item
+                color={
+                  Platform.OS === "ios" ? colors.textLight : colors.textDark
+                }
                 label="English"
                 value="EN"
                 style={{ fontSize: styles.languagePickerFont.size }}
               />
               <Picker.Item
+                color={
+                  Platform.OS === "ios" ? colors.textLight : colors.textDark
+                }
                 label="Russian"
                 value="RU"
                 style={{ fontSize: styles.languagePickerFont.size }}
               />
               <Picker.Item
+                color={
+                  Platform.OS === "ios" ? colors.textLight : colors.textDark
+                }
                 label="Japanese"
                 value="JA"
                 style={{ fontSize: styles.languagePickerFont.size }}
