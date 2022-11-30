@@ -44,6 +44,7 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import { askForPermission, pickImage, uploadImage } from "../utils";
 
 const randomId = nanoid();
 
@@ -178,7 +179,8 @@ export default function Chat() {
         .map(({ doc }) => {
           const message = doc.data();
           return { ...message, createdAt: message.createdAt.toDate() };
-        });
+        })
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       appendMessages(messagesFirestore);
     });
@@ -245,7 +247,38 @@ export default function Chat() {
     await Promise.all(writes);
   }
 
-  function handlePhotoPicker() {}
+  async function sendImage(uri, roomPath) {
+    const { url, fileName } = await uploadImage(
+      uri,
+      `images/rooms/${roomPath || roomHash}`,
+      fileName
+    );
+
+    const message = {
+      _id: fileName,
+      text: "",
+      createdAt: new Date(),
+      user: senderUser,
+      image: url,
+    };
+
+    const lastMessage = { ...message, text: "Image" };
+
+    await Promise.all([
+      addDoc(roomMessagesRef, message),
+      updateDoc(roomRef, { lastMessage }),
+    ]);
+  }
+
+  async function handlePhotoPicker() {
+    const permissionStatus = await askForPermission();
+    if (permissionStatus === "granted") {
+      const result = await pickImage();
+      if (!result.cancelled) {
+        await sendImage(result.uri);
+      }
+    }
+  }
 
   const styles = StyleSheet.create({
     mainView: { flex: 1, backgroundColor: colors.background },
