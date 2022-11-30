@@ -36,7 +36,12 @@ import {
   Composer,
 } from "react-native-gifted-chat";
 import axios from "axios";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 
 const randomId = nanoid();
@@ -289,16 +294,16 @@ export default function Chat() {
         user={senderUser}
         renderAvatar={null}
         wrapInSafeArea={false}
-        // renderActions={(props) => (
-        //   <Actions
-        //     {...props}
-        //     containerStyle={styles.cameraActionIcon}
-        //     onPressActionButton={handlePhotoPicker}
-        //     icon={() => (
-        //       <Ionicons name="camera" size={30} color={colors.primary} />
-        //     )}
-        //   />
-        // )}
+        renderActions={(props) => (
+          <Actions
+            {...props}
+            containerStyle={styles.cameraActionIcon}
+            onPressActionButton={handlePhotoPicker}
+            icon={() => (
+              <AntDesign name="paperclip" size={24} color={colors.accent} />
+            )}
+          />
+        )}
         timeTextStyle={{
           right: { color: colors.textTime },
           left: { color: colors.textTime },
