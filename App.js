@@ -7,13 +7,14 @@ import { auth } from "./firebase";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SignIn from "./screens/SignIn";
 import ContextWrapper from "./context/ContextWrapper";
 import Context from "./context/Context";
 import Profile from "./screens/Profile";
 import Chats from "./screens/Chats";
 import Photo from "./screens/Photo";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Contacts from "./screens/Contacts";
 import Chat from "./screens/Chat";
 import ChatHeader from "./components/ChatHeader";
@@ -21,7 +22,8 @@ import ChatHeader from "./components/ChatHeader";
 LogBox.ignoreLogs(["Sending"]);
 
 const Stack = createStackNavigator();
-const Tab = createMaterialTopTabNavigator();
+// const Tab = createMaterialTopTabNavigator();
+const Tab = createBottomTabNavigator();
 
 function App() {
   const [currUser, setCurrUser] = useState(null);
@@ -58,9 +60,11 @@ function App() {
         <Stack.Navigator
           screenOptions={{
             headerBackTitleVisible: false,
+            headerShadowVisible: false,
             headerStyle: {
-              backgroundColor: colors.textLight,
+              backgroundColor: colors.background,
             },
+            headerTitleStyle: { color: colors.textLight },
             headerBackImage: () => (
               <Ionicons
                 name="chevron-back-circle-outline"
@@ -81,6 +85,7 @@ function App() {
             name="home"
             component={Home}
             options={{ title: "Talltower" }}
+            style={{ color: "red" }}
           />
           {/* <Stack.Screen
             name="contacts"
@@ -114,39 +119,44 @@ function Home() {
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => {
-        return {
-          tabBarLabel: () => {
-            if (route.name === "photo") {
-              return (
-                <Ionicons name="camera" size={20} color={colors.textLight} />
-              );
-            } else {
-              return (
-                <Text style={{ color: colors.textLight }}>
-                  {route.name[0].toLocaleUpperCase() + route.name.slice(1)}
-                </Text>
-              );
-            }
-          },
-          tabBarShowIcon: true,
-          tabBarLabelStyle: {
-            color: colors.accent,
-          },
-          tabBarIndicatorStyle: {
-            backgroundColor: colors.uiLight,
-            height: "100%",
-          },
-          tabBarStyle: {
-            backgroundColor: colors.background,
-          },
-        };
-      }}
       initialRouteName="chats"
+      screenOptions={{
+        headerShown: false,
+        tabBarInactiveBackgroundColor: colors.background,
+        tabBarActiveBackgroundColor: colors.background,
+        tabBarActiveTintColor: "white",
+        tabBarStyle: { backgroundColor: colors.background, borderTopWidth: 0 },
+      }}
     >
       {/* <Tab.Screen name="photo" component={Photo} /> */}
-      <Tab.Screen name="contacts" component={Contacts} />
-      <Tab.Screen name="chats" component={Chats} />
+      <Tab.Screen
+        name="contacts"
+        component={Contacts}
+        options={{
+          tabBarLabel: "Contacts",
+          tabBarIcon: () => (
+            <MaterialCommunityIcons
+              name="contacts"
+              size={20}
+              color={colors.textLight}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="chats"
+        component={Chats}
+        options={{
+          tabBarLabel: "Chats",
+          tabBarIcon: () => (
+            <Ionicons
+              name="chatbubble-sharp"
+              size={20}
+              color={colors.textLight}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
