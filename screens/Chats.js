@@ -79,7 +79,7 @@ export default function Chats() {
         />
       ))}
       {/* <ContactsFloatingIcon /> */}
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
     </View>
   );
 }

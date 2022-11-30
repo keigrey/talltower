@@ -211,7 +211,7 @@ export default function Profile() {
 
   return (
     <React.Fragment>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <View blur style={styles.fillView}>
         <View style={styles.mainView}>
           {!keyboardOpen && (
