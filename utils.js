@@ -60,7 +60,12 @@ export const theme = {
 // };
 
 export async function pickImage() {
-  let result = await ImagePicker.launchImageLibraryAsync();
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    // aspect: [4, 3],
+    quality: 0.2,
+  });
   return result;
 }
 
