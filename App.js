@@ -84,7 +84,7 @@ function App() {
           <Stack.Screen
             name="home"
             component={Home}
-            options={{ title: "Talltower" }}
+            options={{ title: "TALLTOWER" }}
             style={{ color: "red" }}
           />
           {/* <Stack.Screen
