@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
   Keyboard,
   Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase";
@@ -248,36 +249,64 @@ export default function Chat() {
 
   const styles = StyleSheet.create({
     mainView: { flex: 1, backgroundColor: colors.background },
-    cameraActionIcon: {
-      position: "absolute",
-      right: 50,
-      bottom: 5,
-      zIndex: 9999,
+    attachActionIcon: {
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.textInput,
+      height: 50,
+      width: 50,
+      borderRadius: 50,
+      marginBottom: 0,
+      marginLeft: 0,
+      ...Platform.select({
+        ios: {
+          height: 40,
+          width: 40,
+          borderRadius: 40,
+        },
+      }),
+      // position: "absolute",
+      // right: 50,
+      // bottom: 5,
+      // zIndex: 9999,
     },
     inputToolbar: {
-      height: 50,
-      backgroundColor: colors.textInput,
-      // color: "red",
-      marginLeft: 10,
-      marginRight: 10,
-      marginBottom:
-        Platform.OS === "ios" ? (keyboardOpen ? keyboardHeight + 30 : 20) : 10,
-      marginTop: Platform.OS === "ios" ? -10 : 0,
-      borderRadius: 50,
-      paddingTop: 5,
+      backgroundColor: "transparent",
+      paddingLeft: 5,
+      paddingRight: 3,
+      marginRight: 0,
       borderTopWidth: 0,
-      paddingLeft: 7,
     },
     sendButton: {
-      height: 40,
-      width: 40,
-      borderRadius: 40,
-      // backgroundColor: colors.accent,
-      alignItems: "center",
       justifyContent: "center",
-      marginBottom: 5,
-      marginRight: 5,
-      borderWidth: 0,
+      alignItems: "center",
+      height: 50,
+      width: 50,
+      borderRadius: 50,
+      backgroundColor: colors.textInput,
+      ...Platform.select({
+        ios: {
+          height: 40,
+          width: 40,
+          borderRadius: 40,
+        },
+      }),
+    },
+    textInput: {
+      color: colors.textLight,
+      backgroundColor: colors.textInput,
+      borderRadius: 50,
+      paddingLeft: 15,
+      paddingRight: 15,
+      marginRight: 0,
+      marginLeft: 6,
+      marginBottom: 0,
+      marginTop: 0,
+      ...Platform.select({
+        ios: {
+          paddingTop: 12.5,
+        },
+      }),
     },
   });
 
@@ -294,51 +323,51 @@ export default function Chat() {
         user={senderUser}
         renderAvatar={null}
         wrapInSafeArea={false}
-        renderActions={(props) => (
-          <Actions
-            {...props}
-            containerStyle={styles.cameraActionIcon}
-            onPressActionButton={handlePhotoPicker}
-            icon={() => (
-              <AntDesign name="paperclip" size={24} color={colors.accent} />
-            )}
-          />
-        )}
+        alwaysShowSend={true}
         timeTextStyle={{
           right: { color: colors.textTime },
           left: { color: colors.textTime },
         }}
-        renderSend={(props) => {
-          const { text, messageIdGenerator, user, onSend } = props;
-          return (
-            <TouchableOpacity
-              style={styles.sendButton}
-              onPress={() => {
-                if (text && onSend) {
-                  onSend(
-                    {
-                      text: text.trim(),
-                      user,
-                      _id: messageIdGenerator(),
-                    },
-                    true
-                  );
-                }
-              }}
-            >
-              <MaterialCommunityIcons
-                name="send"
-                size={24}
-                color={text ? colors.accent : colors.inactive}
-              />
-            </TouchableOpacity>
-          );
-        }}
         renderInputToolbar={(props) => (
-          <InputToolbar {...props} containerStyle={styles.inputToolbar} />
-        )}
-        renderComposer={(props) => (
-          <Composer {...props} textInputStyle={{ color: colors.textLight }} />
+          <InputToolbar
+            {...props}
+            primaryStyle={{
+              marginBottom: Platform.OS === "ios" ? 23 : 10,
+            }}
+            renderSend={(props) => {
+              const { text, messageIdGenerator, user, onSend } = props;
+              return (
+                <Send {...props}>
+                  <View style={styles.sendButton}>
+                    <MaterialCommunityIcons
+                      name="send"
+                      size={24}
+                      color={text ? colors.accent : colors.inactive}
+                    />
+                  </View>
+                </Send>
+              );
+            }}
+            renderComposer={(props) => (
+              <Composer
+                {...props}
+                placeholder="Message"
+                composerHeight={Platform.OS === "ios" ? 40 : 50}
+                textInputStyle={styles.textInput}
+              />
+            )}
+            renderActions={(props) => (
+              <Actions
+                {...props}
+                containerStyle={styles.attachActionIcon}
+                onPressActionButton={handlePhotoPicker}
+                icon={() => (
+                  <AntDesign name="paperclip" size={24} color={colors.accent} />
+                )}
+              />
+            )}
+            containerStyle={styles.inputToolbar}
+          />
         )}
         renderBubble={(props) => (
           <Bubble
@@ -366,6 +395,7 @@ export default function Chat() {
         )}
       />
       {/* </ImageBackground> */}
+      {/* {Platform.OS === "ios" && <KeyboardAvoidingView behavior="padding" />} */}
       <StatusBar style="light" />
     </View>
   );
