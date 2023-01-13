@@ -121,6 +121,14 @@ Project Link: [https://github.com/keigrey/talltower](https://github.com/keigrey/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+* [Gifted Chat](https://github.com/FaridSafi/react-native-gifted-chat)
+* [DeepL](https://www.deepl.com/)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
