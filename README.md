@@ -48,7 +48,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+![talltower-presentation](./presentation/talltower-presentation.gif)
+
 
 A messaging app for language learners, international couples and other people who want to communicate without borders. Helps make the language barrier less evident and makes conversations feel more natural by not having to use translator apps while chatting.
 
